@@ -21,12 +21,29 @@ class MyApp extends StatelessWidget {
   }
 }
 
+class Mdls extends ChangeNotifier {
+  final List<TextEditingController> models = [];
+  bool loading = false;
+  List<String> titles = [];
+  void setloadingt(bool status) {
+    loading = status;
+    notifyListeners();
+  }
+
+  void addModel(TextEditingController result, String title) {
+    models.add(result);
+    titles.add(title);
+    notifyListeners();
+  }
+}
+
 class MyHomePage extends StatelessWidget {
   final String title;
   MyHomePage({this.title});
   final TextEditingController data = TextEditingController();
   final TextEditingController name = TextEditingController();
   final TextEditingController result = TextEditingController();
+  final Mdls mdl = Mdls();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -68,15 +85,39 @@ class MyHomePage extends StatelessWidget {
                         fontWeight: FontWeight.bold, color: Colors.white),
                   ),
                   onPressed: () {
-                    result.text = json2Dart(data.text, name.text);
+                    mdl.setloadingt(true);
+                    json2Dart(data.text, name.text)
+                        .whenComplete(() => mdl.setloadingt(false));
                   },
                 ),
               ),
-              MyTextField(
-                result,
-                hint: 'Here your Model for mc package',
-                label: 'Result',
-                icon: Icons.restore_outlined,
+              AnimatedBuilder(
+                builder: (BuildContext context, Widget _) {
+                  return mdl.loading
+                      ? Center(
+                          child: CircularProgressIndicator(
+                            valueColor: AlwaysStoppedAnimation(Colors.brown),
+                          ),
+                        )
+                      : Wrap(
+                          children: mdl.models
+                              .map(
+                                (e) => Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: MyTextField(
+                                    e,
+                                    hint: 'Here your Model for mc package',
+                                    label:
+                                        'Result ${mdl.titles[mdl.models.indexOf(e)]} Model',
+                                    icon: Icons.restore_outlined,
+                                  ),
+                                ),
+                              )
+                              .toList(),
+                        );
+                        
+                },
+                animation: mdl,
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -113,7 +154,9 @@ class MyHomePage extends StatelessWidget {
     }
   }
 
-  String json2Dart(String inputUser, String className) {
+  Map type = {"[": "List", "{": "Map"};
+
+  Future json2Dart(String inputUser, String className) {
     className = className.isEmpty ? "MyModel" : className;
     try {
       List jsonInputUser = json.decode(inputUser);
@@ -121,9 +164,20 @@ class MyHomePage extends StatelessWidget {
       String parameters = "";
       String fromVar = "";
       String toVar = "";
+      String t;
       for (Map i in jsonInputUser) {
         for (String u in i.keys) {
-          String t = i[u].runtimeType.toString();
+          if (type.keys.toList().contains(i[u].toString().substring(0, 1))) {
+            if (i[u].toString().substring(0, 1) == "{") {
+              List a = [];
+              a.add(i[u]);
+              json2Dart(json.encode(a), u);
+            }
+            t = type[i[u].toString().substring(0, 1)];
+          } else {
+            t = i[u].runtimeType.toString();
+          }
+
           data += """ $t $u;\n""";
           parameters += """  this.$u,\n""";
           fromVar += "  $u = json['$u'] ?? $u;\n";
@@ -168,11 +222,14 @@ class MyHomePage extends StatelessWidget {
           multi +
           "\n" +
           "}";
-      print(model);
-      return model;
+
+      TextEditingController result = TextEditingController();
+      result.text = model;
+      mdl.addModel(result, className);
+      return Future.value();
     } catch (e) {
       print("[-] $e");
-      return "[-Error] $e";
+      return Future.value("[-Error] $e");
     }
   }
 }
