@@ -63,7 +63,7 @@ class MyHomePage extends StatelessWidget {
                 data,
                 hint: 'Here your json data',
                 help:
-                    "Example \n[{'first_name':'Mohammed','last_name':'chahboun'}]",
+                    "Example your json data as List:\n[{'first_name':'Mohammed','last_name':'chahboun'}]",
                 label: 'Json Data',
                 icon: Icons.data_usage,
               ),
@@ -115,7 +115,6 @@ class MyHomePage extends StatelessWidget {
                               )
                               .toList(),
                         );
-                        
                 },
                 animation: mdl,
               ),
@@ -124,15 +123,42 @@ class MyHomePage extends StatelessWidget {
                 children: [
                   InkWell(
                     onTap: () => _launchURL("https://pub.dev/packages/mc"),
-                    child: Text("[mc Package]", style: stl),
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.library_add,
+                          color: Colors.brown,
+                          size: 45.0,
+                        ),
+                        Text("mc Package", style: stl),
+                      ],
+                    ),
                   ),
                   InkWell(
                     onTap: () => _launchURL("https://github.com/M97Chahboun"),
-                    child: Text("[Github]", style: stl),
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.code,
+                          color: Colors.brown,
+                          size: 45.0,
+                        ),
+                        Text("Github", style: stl),
+                      ],
+                    ),
                   ),
                   InkWell(
                     onTap: () => _launchURL("https://chahboun.dev"),
-                    child: Text("[Portfolio]", style: stl),
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.person,
+                          color: Colors.brown,
+                          size: 45.0,
+                        ),
+                        Text("Portfolio", style: stl),
+                      ],
+                    ),
                   )
                 ],
               )
@@ -154,31 +180,35 @@ class MyHomePage extends StatelessWidget {
     }
   }
 
-  Map type = {"[": "List", "{": "Map"};
-
   Future json2Dart(String inputUser, String className) {
     className = className.isEmpty ? "MyModel" : className;
     try {
-      List jsonInputUser = json.decode(inputUser);
+      List jsonInputUser = json.decode(inputUser.trim());
       String data = "";
       String parameters = "";
       String fromVar = "";
       String toVar = "";
-      String t;
       for (Map i in jsonInputUser) {
         for (String u in i.keys) {
-          if (type.keys.toList().contains(i[u].toString().substring(0, 1))) {
-            if (i[u].toString().substring(0, 1) == "{") {
-              List a = [];
-              a.add(i[u]);
-              json2Dart(json.encode(a), u);
-            }
-            t = type[i[u].toString().substring(0, 1)];
+          if (i[u] is String) {
+            data += """ String $u;\n""";
+          } else if (i[u] is double && i[u].toString().contains(".")) {
+            data += """ double $u;\n""";
+          } else if (i[u] is int) {
+            data += """ int $u;\n""";
+          } else if (i[u] is List) {
+            data += """ List $u;\n""";
+          } else if (i[u] is Map) {
+            List a = [];
+            a.add(i[u]);
+            print(a);
+            String mdl = u.substring(0, 1).toUpperCase() + u.substring(1);
+            json2Dart(json.encode(a), mdl);
+            data += """ $mdl $u = $mdl();\n""";
           } else {
-            t = i[u].runtimeType.toString();
+            print("\n>> See this type is not their .\n");
           }
 
-          data += """ $t $u;\n""";
           parameters += """  this.$u,\n""";
           fromVar += "  $u = json['$u'] ?? $u;\n";
           toVar += "  data['$u'] = this.$u;\n";
