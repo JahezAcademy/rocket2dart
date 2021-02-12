@@ -118,48 +118,14 @@ class MyHomePage extends StatelessWidget {
                 },
                 animation: mdl,
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              Wrap(
+                crossAxisAlignment: WrapCrossAlignment.center,
+                alignment: WrapAlignment.spaceEvenly,
                 children: [
-                  InkWell(
-                    onTap: () => _launchURL("https://pub.dev/packages/mc"),
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.library_add,
-                          color: Colors.brown,
-                          size: 45.0,
-                        ),
-                        Text("mc Package", style: stl),
-                      ],
-                    ),
-                  ),
-                  InkWell(
-                    onTap: () => _launchURL("https://github.com/M97Chahboun"),
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.code,
-                          color: Colors.brown,
-                          size: 45.0,
-                        ),
-                        Text("Github", style: stl),
-                      ],
-                    ),
-                  ),
-                  InkWell(
-                    onTap: () => _launchURL("https://chahboun.dev"),
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.person,
-                          color: Colors.brown,
-                          size: 45.0,
-                        ),
-                        Text("Portfolio", style: stl),
-                      ],
-                    ),
-                  )
+                  Links("https://pub.dev/packages/mc", Icons.library_add,
+                      "mc Package"),
+                  Links("https://github.com/M97Chahboun", Icons.code, "Github"),
+                  Links("https://chahboun.dev", Icons.person, "Portfolio"),
                 ],
               )
             ],
@@ -169,19 +135,10 @@ class MyHomePage extends StatelessWidget {
     );
   }
 
-  TextStyle stl = TextStyle(
-      fontSize: 25.0, fontWeight: FontWeight.bold, color: Colors.brown);
-
-  _launchURL(String url) async {
-    if (await canLaunch(url)) {
-      await launch(url);
-    } else {
-      throw 'Could not launch $url';
-    }
-  }
-
   Future json2Dart(String inputUser, String className) {
-    className = className.isEmpty ? "MyModel" : className;
+    className = className.isEmpty
+        ? "MyModel"
+        : className.substring(0, 1).toUpperCase() + className.substring(1);
     try {
       List jsonInputUser = json.decode(inputUser.trim());
       String data = "";
@@ -290,6 +247,48 @@ class MyTextField extends StatelessWidget {
               color: Colors.brown,
             ),
           )),
+    );
+  }
+}
+
+class Links extends StatelessWidget {
+  final String link, title;
+  final IconData icon;
+  Links(this.link, this.icon, this.title);
+  _launchURL(String url) async {
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+
+  TextStyle stl = TextStyle(
+      fontSize: 25.0, fontWeight: FontWeight.bold, color: Colors.brown);
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () => _launchURL(link),
+      child: Container(
+        width: MediaQuery.of(context).size.width * 0.25,
+        child: Wrap(
+          crossAxisAlignment: WrapCrossAlignment.center,
+          alignment: WrapAlignment.center,
+          children: [
+            Icon(
+              icon,
+              color: Colors.brown,
+              size: 45.0,
+            ),
+            Text(
+              title,
+              style: stl,
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
