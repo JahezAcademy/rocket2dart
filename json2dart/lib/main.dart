@@ -145,34 +145,54 @@ class MyHomePage extends StatelessWidget {
       String parameters = "";
       String fromVar = "";
       String toVar = "";
+      String initial = "{\n  multi = multi ?? [];\n";
+      String tj = "";
       for (Map i in jsonInputUser) {
         for (String u in i.keys) {
           if (i[u] is String) {
             data += """ String $u;\n""";
-          } else if (i[u] is double && i[u].toString().contains(".")) {
+            fromVar += "  $u = json['$u'] ?? $u;\n";
+            parameters += """  this.$u,\n""";
+
+            toVar += "  data['$u'] = this.$u$tj;\n";
+          } else if (i[u] is num && i[u].toString().contains(".")) {
             data += """ double $u;\n""";
+            fromVar += "  $u = json['$u'] ?? $u;\n";
+            parameters += """  this.$u,\n""";
+
+            toVar += "  data['$u'] = this.$u$tj;\n";
           } else if (i[u] is int) {
             data += """ int $u;\n""";
+            fromVar += "  $u = json['$u'] ?? $u;\n";
+            parameters += """  this.$u,\n""";
+
+            toVar += "  data['$u'] = this.$u$tj;\n";
           } else if (i[u] is List) {
             data += """ List $u;\n""";
+            fromVar += "  $u = json['$u'] ?? $u;\n";
+            parameters += """  this.$u,\n""";
+
+            toVar += "  data['$u'] = this.$u$tj;\n";
           } else if (i[u] is Map) {
             List a = [];
             a.add(i[u]);
-            print(a);
             String mdl = u.substring(0, 1).toUpperCase() + u.substring(1);
             json2Dart(json.encode(a), mdl);
-            data += """ $mdl $u = $mdl();\n""";
+            data += """ $mdl $u;\n""";
+            initial += "  $u ??= $mdl();\n";
+            fromVar += "  $u.fromJson(json['$u'] ?? $u.toJson());\n";
+            tj = ".toJson()";
+            parameters += """  this.$u,\n""";
+
+            toVar += "  data['$u'] = this.$u$tj;\n";
+            tj = "";
           } else {
             print("\n>> See this type is not their .\n");
           }
-
-          parameters += """  this.$u,\n""";
-          fromVar += "  $u = json['$u'] ?? $u;\n";
-          toVar += "  data['$u'] = this.$u;\n";
         }
         break;
       }
-      data += " List multi = [];\n";
+      data += " List multi;\n";
       fromVar += "  return super.fromJson(json);\n";
       String multi = """\n\nvoid setMulti(List d) {
     List r = d.map((e) {
@@ -185,20 +205,22 @@ class MyHomePage extends StatelessWidget {
       String toJson =
           " Map<String, dynamic> toJson() {\n final Map<String, dynamic> data = new Map<String, dynamic>();";
       String fromJson = " fromJson(Map<String, dynamic> json) {";
-      String class_ = "class $className extends McModel{\n";
+      String headClass = "class $className extends McModel{\n";
       String constractor = " $className({";
-      String model = class_ +
+      String model = headClass +
           data +
           "\n" +
           constractor +
           "\n" +
           parameters +
-          " });\n" +
+          " })" +
+          initial +
+          "}" +
           "\n" +
           fromJson +
           "\n" +
           fromVar +
-          " }" +
+          " }\n" +
           "\n\n" +
           toJson +
           "\n" +
