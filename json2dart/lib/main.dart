@@ -50,6 +50,7 @@ class MyHomePage extends StatelessWidget {
   final TextEditingController name = TextEditingController();
   final TextEditingController result = TextEditingController();
   final Mdls mdl = Mdls();
+  String mainModel;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -81,6 +82,7 @@ class MyHomePage extends StatelessWidget {
                 help: "Type your json data from your API",
                 label: 'Json Data',
                 icon: Icons.data_usage,
+                max: 15,
               ),
               MyTextField(
                 name,
@@ -150,10 +152,16 @@ class MyHomePage extends StatelessWidget {
     );
   }
 
+  int checker = 0;
+
   Future json2Dart(String inputUser, String className) {
     className = className.isEmpty
         ? "MyModel"
         : className.substring(0, 1).toUpperCase() + className.substring(1);
+    if (checker == 0) {
+      mainModel = className;
+    }
+    checker++;
     inputUser = inputUser.isEmpty ? '{"mcPackage":"mc"}' : inputUser;
     try {
       var jsonInputUser = json.decode(inputUser.trim());
@@ -165,7 +173,7 @@ class MyHomePage extends StatelessWidget {
       String tj = "";
       String multi = "";
       if (jsonInputUser is List) {
-        initial = "{\n  multi = multi ?? [];\n";
+        initial = "\n\n  multi = multi ?? [];\n";
         data += " List multi;\n";
         multi = """\n\nvoid setMulti(List d) {
         List r = d.map((e) {
@@ -175,6 +183,7 @@ class MyHomePage extends StatelessWidget {
             }).toList();
             multi = r;
           }\n""";
+
         for (Map i in jsonInputUser) {
           for (String u in i.keys) {
             if (i[u] is String) {
@@ -255,31 +264,31 @@ class MyHomePage extends StatelessWidget {
             toVar += "  data['$u'] = this.$u$tj;\n";
           } else if (jsonInputUser[u] is List) {
             if (jsonInputUser[u][0] is List) {
-                String mdl = u.substring(0, 1).toUpperCase() + u.substring(1);
-                json2Dart(json.encode(jsonInputUser[u]), mdl);
-                data += """ $mdl $u;\n""";
-                initial += "  $u ??= $mdl();\n";
-                fromVar += "  $u.fromJson(json['$u'] ?? $u.toJson());\n";
-                tj = ".toJson()";
-                parameters += """  this.$u,\n""";
-                toVar += "  data['$u'] = this.$u$tj;\n";
-                tj = "";
-              } else if (jsonInputUser[u][0] is Map) {
-                String mdl = u.substring(0, 1).toUpperCase() + u.substring(1);
-                json2Dart(json.encode(jsonInputUser[u]), mdl);
-                data += """ $mdl $u;\n""";
-                initial += "  $u ??= $mdl();\n";
-                fromVar += "  $u.fromJson(json['$u'] ?? $u.toJson());\n";
-                tj = ".toJson()";
-                parameters += """  this.$u,\n""";
-                toVar += "  data['$u'] = this.$u$tj;\n";
-                tj = "";
-              } else {
-                data += """ List $u;\n""";
-                fromVar += "  $u = json['$u'] ?? $u;\n";
-                parameters += """  this.$u,\n""";
-                toVar += "  data['$u'] = this.$u$tj;\n";
-              }
+              String mdl = u.substring(0, 1).toUpperCase() + u.substring(1);
+              json2Dart(json.encode(jsonInputUser[u]), mdl);
+              data += """ $mdl $u;\n""";
+              initial += "  $u ??= $mdl();\n";
+              fromVar += "  $u.fromJson(json['$u'] ?? $u.toJson());\n";
+              tj = ".toJson()";
+              parameters += """  this.$u,\n""";
+              toVar += "  data['$u'] = this.$u$tj;\n";
+              tj = "";
+            } else if (jsonInputUser[u][0] is Map) {
+              String mdl = u.substring(0, 1).toUpperCase() + u.substring(1);
+              json2Dart(json.encode(jsonInputUser[u]), mdl);
+              data += """ $mdl $u;\n""";
+              initial += "  $u ??= $mdl();\n";
+              fromVar += "  $u.fromJson(json['$u'] ?? $u.toJson());\n";
+              tj = ".toJson()";
+              parameters += """  this.$u,\n""";
+              toVar += "  data['$u'] = this.$u$tj;\n";
+              tj = "";
+            } else {
+              data += """ List $u;\n""";
+              fromVar += "  $u = json['$u'] ?? $u;\n";
+              parameters += """  this.$u,\n""";
+              toVar += "  data['$u'] = this.$u$tj;\n";
+            }
           } else if (jsonInputUser[u] is Map) {
             List a = [];
             a.add(jsonInputUser[u]);
@@ -306,6 +315,7 @@ class MyHomePage extends StatelessWidget {
       String headClass = "class $className extends McModel{\n";
       String constractor = " $className({";
       String init = initial.isNotEmpty ? "}" : ";";
+      String it = initial.isNotEmpty ? "{\n" : "";
       String model = headClass +
           data +
           "\n" +
@@ -313,6 +323,7 @@ class MyHomePage extends StatelessWidget {
           "\n" +
           parameters +
           " })" +
+          it +
           initial +
           init +
           "\n" +
@@ -331,9 +342,26 @@ class MyHomePage extends StatelessWidget {
           "\n" +
           "}";
 
+      if (model.contains("class $mainModel")) {
+        model +=
+            """\n\n//Controller of your main model\n//if you need more controller you can copy this and use it
+        \nclass ${mainModel}C {
+        static final ${mainModel}C _${mainModel.toLowerCase()}C = ${mainModel}C._internal();
+        $mainModel ${mainModel.toLowerCase()} = $mainModel();
+        factory ${mainModel}C() {
+          return _${mainModel.toLowerCase()}C;
+        }
+        //you can add more methods
+        //any action on multi list you need to call rebuild method for rebuild widgets
+        ${mainModel}C._internal();
+      }
+""";
+      }
+
       TextEditingController result = TextEditingController();
       result.text = model;
       mdl.addModel(result, className);
+
       return Future.value();
     } catch (e) {
       print("[-] $e");
@@ -346,8 +374,9 @@ class MyTextField extends StatelessWidget {
   final String hint, help, label;
   final IconData icon;
   final TextEditingController controller;
+  final int max;
   MyTextField(this.controller,
-      {Key key, this.hint, this.help, this.label, this.icon})
+      {Key key, this.hint, this.help, this.label, this.icon, this.max})
       : super(key: key);
 
   @override
@@ -355,7 +384,7 @@ class MyTextField extends StatelessWidget {
     return Container(
       child: TextField(
           controller: controller,
-          maxLines: null,
+          maxLines: max,
           keyboardType: TextInputType.multiline,
           decoration: new InputDecoration(
             border: new OutlineInputBorder(
