@@ -152,16 +152,12 @@ class MyHomePage extends StatelessWidget {
     );
   }
 
-  int checker = 0;
 
   Future json2Dart(String inputUser, String className) {
     className = className.isEmpty
         ? "MyModel"
         : className.substring(0, 1).toUpperCase() + className.substring(1);
-    if (checker == 0) {
-      mainModel = className;
-    }
-    checker++;
+  
     inputUser = inputUser.isEmpty ? '{"mcPackage":"mc"}' : inputUser;
     try {
       var jsonInputUser = json.decode(inputUser.trim());
@@ -342,21 +338,7 @@ class MyHomePage extends StatelessWidget {
           "\n" +
           "}";
 
-      if (model.contains("class $mainModel")) {
-        model +=
-            """\n\n//Controller of your main model\n//if you need more controller you can copy this and use it
-        \nclass ${mainModel}C {
-        static final ${mainModel}C _${mainModel.toLowerCase()}C = ${mainModel}C._internal();
-        $mainModel ${mainModel.toLowerCase()} = $mainModel();
-        factory ${mainModel}C() {
-          return _${mainModel.toLowerCase()}C;
-        }
-        //you can add more methods
-        //any action on multi list you need to call rebuild method for rebuild widgets
-        ${mainModel}C._internal();
-      }
-""";
-      }
+  
 
       TextEditingController result = TextEditingController();
       result.text = model;
