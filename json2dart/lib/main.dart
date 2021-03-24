@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 void main() {
@@ -50,7 +51,6 @@ class MyHomePage extends StatelessWidget {
   final TextEditingController name = TextEditingController();
   final TextEditingController result = TextEditingController();
   final Mdls mdl = Mdls();
-  String mainModel;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -94,8 +94,9 @@ class MyHomePage extends StatelessWidget {
               Container(
                 width: MediaQuery.of(context).size.width,
                 height: MediaQuery.of(context).size.height * 0.08,
-                child: FlatButton(
-                  color: Colors.brown,
+                child: TextButton(
+                  style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all(Colors.brown)),
                   child: Text(
                     "Convert",
                     style: TextStyle(
@@ -121,13 +122,24 @@ class MyHomePage extends StatelessWidget {
                               .map(
                                 (e) => Padding(
                                   padding: const EdgeInsets.all(8.0),
-                                  child: MyTextField(
-                                    e,
-                                    hint: 'Here your Model for mc package',
-                                    label:
-                                        'Result ${mdl.titles[mdl.models.indexOf(e)]} Model',
-                                    icon: Icons.restore_outlined,
-                                  ),
+                                  child: MyTextField(e,
+                                      hint: 'Here your Model for mc package',
+                                      label:
+                                          'Result ${mdl.titles[mdl.models.indexOf(e)]} Model',
+                                      icon: Icons.restore_outlined,
+                                      copy: IconButton(
+                                        icon: Icon(Icons.copy),
+                                        onPressed: () => Clipboard.setData(
+                                                new ClipboardData(text: e.text))
+                                            .whenComplete(() =>
+                                                ScaffoldMessenger.of(context)
+                                                    .showSnackBar(SnackBar(
+                                                  content:
+                                                      const Text('Data copied'),
+                                                  duration: const Duration(
+                                                      seconds: 1),
+                                                ))),
+                                      )),
                                 ),
                               )
                               .toList(),
@@ -142,7 +154,8 @@ class MyHomePage extends StatelessWidget {
                   Links("https://pub.dev/packages/mc", Icons.library_add,
                       "mc Package"),
                   Links("https://github.com/M97Chahboun", Icons.code, "Github"),
-                  Links("https://chahboun.dev", Icons.person, "Portfolio"),
+                  Links("https://github.com/ourflutter/Json2Dart",
+                      Icons.settings, "Tool"),
                 ],
               )
             ],
@@ -152,12 +165,11 @@ class MyHomePage extends StatelessWidget {
     );
   }
 
-
   Future json2Dart(String inputUser, String className) {
     className = className.isEmpty
         ? "MyModel"
         : className.substring(0, 1).toUpperCase() + className.substring(1);
-  
+
     inputUser = inputUser.isEmpty ? '{"mcPackage":"mc"}' : inputUser;
     try {
       var jsonInputUser = json.decode(inputUser.trim());
@@ -338,8 +350,6 @@ class MyHomePage extends StatelessWidget {
           "\n" +
           "}";
 
-  
-
       TextEditingController result = TextEditingController();
       result.text = model;
       mdl.addModel(result, className);
@@ -357,8 +367,15 @@ class MyTextField extends StatelessWidget {
   final IconData icon;
   final TextEditingController controller;
   final int max;
+  final IconButton copy;
   MyTextField(this.controller,
-      {Key key, this.hint, this.help, this.label, this.icon, this.max})
+      {Key key,
+      this.hint,
+      this.help,
+      this.label,
+      this.icon,
+      this.max,
+      this.copy})
       : super(key: key);
 
   @override
@@ -374,6 +391,7 @@ class MyTextField extends StatelessWidget {
             hintText: hint,
             helperText: help,
             labelText: label,
+            suffixIcon: copy,
             prefixIcon: Icon(
               icon,
               color: Colors.brown,
