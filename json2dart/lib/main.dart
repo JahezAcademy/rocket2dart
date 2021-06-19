@@ -183,13 +183,13 @@ class MyHomePage extends StatelessWidget {
       if (jsonInputUser is List) {
         initial = "\n\n  multi = multi ?? [];\n";
         data += " List multi;\n";
-        multi = """\n\nvoid setMulti(List d) {
-        List r = d.map((e) {
-          $className m = $className();
-          m.fromJson(e);
-          return m;
+        multi = """\n\nvoid setMulti(List data) {
+        List listOf${className.toLowerCase()} = data.map((e) {
+          $className ${className.toLowerCase()} = $className();
+          ${className.toLowerCase()}.fromJson(e);
+          return ${className.toLowerCase()};
             }).toList();
-            multi = r;
+            multi = listOf${className.toLowerCase()};
           }\n""";
 
         for (Map i in jsonInputUser) {
@@ -442,3 +442,5 @@ class Links extends StatelessWidget {
     );
   }
 }
+
+
