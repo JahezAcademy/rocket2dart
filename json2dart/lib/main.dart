@@ -182,7 +182,7 @@ class MyHomePage extends StatelessWidget {
       String multi = "";
       if (jsonInputUser is List) {
         initial = "\n\n  multi = multi ?? [];\n";
-        data += " List multi;\n";
+        data += " List<$className> multi;\n";
         multi = """\n\nvoid setMulti(List data) {
         List listOf${className.toLowerCase()} = data.map((e) {
           $className ${className.toLowerCase()} = $className();
@@ -320,7 +320,7 @@ class MyHomePage extends StatelessWidget {
       String toJson =
           " Map<String, dynamic> toJson() {\n final Map<String, dynamic> data = new Map<String, dynamic>();";
       String fromJson = " fromJson(Map<String, dynamic> json) {";
-      String headClass = "class $className extends McModel{\n";
+      String headClass = "class $className extends McModel<$className>{\n";
       String constractor = " $className({";
       String init = initial.isNotEmpty ? "}" : ";";
       String it = initial.isNotEmpty ? "{\n" : "";
@@ -442,5 +442,3 @@ class Links extends StatelessWidget {
     );
   }
 }
-
-
