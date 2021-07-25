@@ -174,6 +174,7 @@ class MyHomePage extends StatelessWidget {
     try {
       var jsonInputUser = json.decode(inputUser.trim());
       String data = "";
+      String variable = "";
       String parameters = "";
       String fromVar = "";
       String toVar = "";
@@ -194,6 +195,7 @@ class MyHomePage extends StatelessWidget {
 
         for (Map i in jsonInputUser) {
           for (String u in i.keys) {
+            variable += ' String ${u}Var = "$u";\n';
             if (i[u] is String) {
               data += """ String $u;\n""";
               fromVar += "  $u = json['$u'] ?? $u;\n";
@@ -254,6 +256,7 @@ class MyHomePage extends StatelessWidget {
         }
       } else {
         for (String u in jsonInputUser.keys) {
+          variable += ' String ${u}Var = "$u";\n';
           if (jsonInputUser[u] is String) {
             data += """ String $u;\n""";
             fromVar += "  $u = json['$u'] ?? $u;\n";
@@ -327,6 +330,7 @@ class MyHomePage extends StatelessWidget {
       String model = headClass +
           data +
           "\n" +
+          variable +
           constractor +
           "\n" +
           parameters +
@@ -413,7 +417,7 @@ class Links extends StatelessWidget {
     }
   }
 
-  TextStyle stl = TextStyle(
+  final TextStyle stl = TextStyle(
       fontSize: 25.0, fontWeight: FontWeight.bold, color: Colors.brown);
 
   @override
