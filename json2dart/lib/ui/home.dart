@@ -156,22 +156,23 @@ class MyHomePage extends StatelessWidget {
 
         for (Map i in jsonInputUser) {
           for (String u in i.keys) {
-            variable += ' String ${u}Var = "$u";\n';
+            String fixedField = fixFieldName(u);
+            variable += ' String ${fixedField}Var = "$u";\n';
             if (i[u] is String) {
-              data += """ String? $u;\n""";
-              fromVar += "  $u = json['$u'] ?? $u;\n";
-              parameters += """  this.$u,\n""";
-              toVar += "  data['$u'] = this.$u$tj;\n";
+              data += """ String? $fixedField;\n""";
+              fromVar += "  $fixedField = json['$u'] ?? $fixedField;\n";
+              parameters += """  this.$fixedField,\n""";
+              toVar += "  data['$u'] = this.$fixedField$tj;\n";
             } else if (i[u] is num && i[u].toString().contains(".")) {
-              data += """ double? $u;\n""";
-              fromVar += "  $u = json['$u'] ?? $u;\n";
-              parameters += """  this.$u,\n""";
-              toVar += "  data['$u'] = this.$u$tj;\n";
+              data += """ double? $fixedField;\n""";
+              fromVar += "  $fixedField = json['$u'] ?? $fixedField;\n";
+              parameters += """  this.$fixedField,\n""";
+              toVar += "  data['$u'] = this.$fixedField$tj;\n";
             } else if (i[u] is int) {
-              data += """ int? $u;\n""";
-              fromVar += "  $u = json['$u'] ?? $u;\n";
-              parameters += """  this.$u,\n""";
-              toVar += "  data['$u'] = this.$u$tj;\n";
+              data += """ int? $fixedField;\n""";
+              fromVar += "  $fixedField = json['$u'] ?? $fixedField;\n";
+              parameters += """  this.$fixedField,\n""";
+              toVar += "  data['$u'] = this.$fixedField$tj;\n";
             } else if (i[u] is List) {
               if (i[u][0] is List) {
                 String mdl = u.substring(0, 1).toUpperCase() + u.substring(1);
@@ -218,22 +219,23 @@ class MyHomePage extends StatelessWidget {
       } else {
         for (String u in jsonInputUser.keys) {
           variable += ' String ${u}Var = "$u";\n';
+          String fixedField = fixFieldName(u);
           if (jsonInputUser[u] is String) {
-            data += """ String? $u;\n""";
-            fromVar += "  $u = json['$u'] ?? $u;\n";
-            parameters += """  this.$u,\n""";
-            toVar += "  data['$u'] = this.$u$tj;\n";
+            data += """ String? $fixedField;\n""";
+            fromVar += "  $fixedField = json['$u'] ?? $fixedField;\n";
+            parameters += """  this.$fixedField,\n""";
+            toVar += "  data['$u'] = this.$fixedField$tj;\n";
           } else if (jsonInputUser[u] is num &&
               jsonInputUser[u].toString().contains(".")) {
-            data += """ double? $u;\n""";
-            fromVar += "  $u = json['$u'] ?? $u;\n";
-            parameters += """  this.$u,\n""";
-            toVar += "  data['$u'] = this.$u$tj;\n";
+            data += """ double? $fixedField;\n""";
+            fromVar += "  $fixedField = json['$u'] ?? $fixedField;\n";
+            parameters += """  this.$fixedField,\n""";
+            toVar += "  data['$u'] = this.$fixedField$tj;\n";
           } else if (jsonInputUser[u] is int) {
-            data += """ int? $u;\n""";
-            fromVar += "  $u = json['$u'] ?? $u;\n";
-            parameters += """  this.$u,\n""";
-            toVar += "  data['$u'] = this.$u$tj;\n";
+            data += """ int? $fixedField;\n""";
+            fromVar += "  $fixedField = json['$u'] ?? $fixedField;\n";
+            parameters += """  this.$fixedField,\n""";
+            toVar += "  data['$u'] = this.$fixedField$tj;\n";
           } else if (jsonInputUser[u] is List) {
             if (jsonInputUser[u][0] is List) {
               String mdl = u.substring(0, 1).toUpperCase() + u.substring(1);
@@ -280,12 +282,12 @@ class MyHomePage extends StatelessWidget {
         }
       }
 
-      fromVar += "  return super.fromJson(json);\n";
+      fromVar += "super.fromJson(json);\n";
 
       String toJson =
-          " Map<String, dynamic> toJson() {\n final Map<String, dynamic> data = {};";
+          "@override\n\nMap<String, dynamic> toJson() {\n final Map<String, dynamic> data = {};";
       String fromJson =
-          "\n\nvoid fromJson(covariant Map<String, dynamic> json) {";
+          "@override\n\nvoid fromJson(covariant Map<String, dynamic> json) {";
       String headClass =
           "import 'package:mc/mc.dart';\n\nclass $className extends McModel<$className>{\n";
       String constractor = " $className({";
@@ -327,6 +329,23 @@ class MyHomePage extends StatelessWidget {
     } catch (e) {
       print("[-] $e");
       return Future.value("[-Error] $e");
+    }
+  }
+
+  String fixFieldName(String name) {
+    String result = "";
+    if (name.contains("_")) {
+      List<String> splited = name.split("_");
+      splited.forEach((e) {
+        if (splited.first != e) {
+          result += e.substring(0, 1).toUpperCase() + e.substring(1);
+        } else {
+          result += e;
+        }
+      });
+      return result;
+    } else {
+      return name;
     }
   }
 }
