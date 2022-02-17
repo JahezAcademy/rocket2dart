@@ -21,3 +21,5 @@ class Mdls extends ChangeNotifier {
     notifyListeners();
   }
 }
+
+final Mdls mdl = Mdls();

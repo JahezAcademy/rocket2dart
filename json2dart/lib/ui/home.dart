@@ -1,10 +1,10 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:json2dart/controller/controller.dart';
+
+import 'package:json2dart/logic/generator.dart';
 import 'package:json2dart/ui/widgets/link.dart';
 import 'package:json2dart/ui/widgets/txtfield.dart';
-import 'package:dart_style/dart_style.dart';
 
 class MyHomePage extends StatelessWidget {
   final String title;
@@ -12,7 +12,7 @@ class MyHomePage extends StatelessWidget {
   final TextEditingController data = TextEditingController();
   final TextEditingController name = TextEditingController();
   final TextEditingController result = TextEditingController();
-  final Mdls mdl = Mdls();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -125,227 +125,5 @@ class MyHomePage extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  Future json2Dart(String inputUser, String className) {
-    className = className.isEmpty
-        ? "MyModel"
-        : className.substring(0, 1).toUpperCase() + className.substring(1);
-
-    inputUser = inputUser.isEmpty ? '{"mcPackage":"mc"}' : inputUser;
-    try {
-      var jsonInputUser = json.decode(inputUser.trim());
-      String data = "";
-      String variable = "";
-      String parameters = "";
-      String fromVar = "";
-      String toVar = "";
-      String initial = "";
-      String tj = "";
-      String multi = "";
-      if (jsonInputUser is List) {
-        data += " List<$className>? multi;\n";
-        multi = """\n\nvoid setMulti(List data) {
-        List<$className> listOf${className.toLowerCase()} = data.map((e) {
-          $className ${className.toLowerCase()} = $className();
-          ${className.toLowerCase()}.fromJson(e);
-          return ${className.toLowerCase()};
-            }).toList();
-            multi = listOf${className.toLowerCase()};
-          }\n""";
-
-        for (Map i in jsonInputUser) {
-          for (String u in i.keys) {
-            String fixedField = fixFieldName(u);
-            variable += ' String ${fixedField}Var = "$u";\n';
-            if (i[u] is String) {
-              data += """ String? $fixedField;\n""";
-              fromVar += "  $fixedField = json['$u'] ?? $fixedField;\n";
-              parameters += """  this.$fixedField,\n""";
-              toVar += "  data['$u'] = this.$fixedField$tj;\n";
-            } else if (i[u] is num && i[u].toString().contains(".")) {
-              data += """ double? $fixedField;\n""";
-              fromVar += "  $fixedField = json['$u'] ?? $fixedField;\n";
-              parameters += """  this.$fixedField,\n""";
-              toVar += "  data['$u'] = this.$fixedField$tj;\n";
-            } else if (i[u] is int) {
-              data += """ int? $fixedField;\n""";
-              fromVar += "  $fixedField = json['$u'] ?? $fixedField;\n";
-              parameters += """  this.$fixedField,\n""";
-              toVar += "  data['$u'] = this.$fixedField$tj;\n";
-            } else if (i[u] is List) {
-              if (i[u][0] is List) {
-                String mdl = u.substring(0, 1).toUpperCase() + u.substring(1);
-                json2Dart(json.encode(i[u]), mdl);
-                data += """ $mdl? $u;\n""";
-                initial += "  $u ??= $mdl();\n";
-                fromVar += "  $u!.fromJson(json['$u'] ?? $u!.toJson());\n";
-                tj = ".toJson()";
-                parameters += """  this.$u,\n""";
-                toVar += "  data['$u'] = this.$u$tj;\n";
-                tj = "";
-              } else if (i[u][0] is Map) {
-                String mdl = u.substring(0, 1).toUpperCase() + u.substring(1);
-                json2Dart(json.encode(i[u]), mdl);
-                data += """ $mdl? $u;\n""";
-                initial += "  $u ??= $mdl();\n";
-                fromVar += "  $u!.fromJson(json['$u'] ?? $u!.toJson());\n";
-                tj = ".toJson()";
-                parameters += """  this.$u,\n""";
-                toVar += "  data['$u'] = this.$u$tj;\n";
-                tj = "";
-              } else {
-                data += """ List? $u;\n""";
-                fromVar += "  $u = json['$u'] ?? $u;\n";
-                parameters += """  this.$u,\n""";
-                toVar += "  data['$u'] = this.$u$tj;\n";
-              }
-            } else if (i[u] is Map) {
-              String mdl = u.substring(0, 1).toUpperCase() + u.substring(1);
-              json2Dart(json.encode(i[u]), mdl);
-              data += """ $mdl? $u;\n""";
-              initial += "  $u ??= $mdl();\n";
-              fromVar += "  $u!.fromJson(json['$u'] ?? $u!.toJson());\n";
-              tj = ".toJson()";
-              parameters += """  this.$u,\n""";
-              toVar += "  data['$u'] = this.$u$tj;\n";
-              tj = "";
-            } else {
-              print("\n>> See this type is not their .\n");
-            }
-          }
-          break;
-        }
-      } else {
-        for (String u in jsonInputUser.keys) {
-          variable += ' String ${u}Var = "$u";\n';
-          String fixedField = fixFieldName(u);
-          if (jsonInputUser[u] is String) {
-            data += """ String? $fixedField;\n""";
-            fromVar += "  $fixedField = json['$u'] ?? $fixedField;\n";
-            parameters += """  this.$fixedField,\n""";
-            toVar += "  data['$u'] = this.$fixedField$tj;\n";
-          } else if (jsonInputUser[u] is num &&
-              jsonInputUser[u].toString().contains(".")) {
-            data += """ double? $fixedField;\n""";
-            fromVar += "  $fixedField = json['$u'] ?? $fixedField;\n";
-            parameters += """  this.$fixedField,\n""";
-            toVar += "  data['$u'] = this.$fixedField$tj;\n";
-          } else if (jsonInputUser[u] is int) {
-            data += """ int? $fixedField;\n""";
-            fromVar += "  $fixedField = json['$u'] ?? $fixedField;\n";
-            parameters += """  this.$fixedField,\n""";
-            toVar += "  data['$u'] = this.$fixedField$tj;\n";
-          } else if (jsonInputUser[u] is List) {
-            if (jsonInputUser[u][0] is List) {
-              String mdl = u.substring(0, 1).toUpperCase() + u.substring(1);
-              json2Dart(json.encode(jsonInputUser[u]), mdl);
-              data += """ $mdl? $u;\n""";
-              initial += "  $u ??= $mdl();\n";
-              fromVar += "  $u!.fromJson(json['$u'] ?? $u!.toJson());\n";
-              tj = ".toJson()";
-              parameters += """  this.$u,\n""";
-              toVar += "  data['$u'] = this.$u$tj;\n";
-              tj = "";
-            } else if (jsonInputUser[u][0] is Map) {
-              String mdl = u.substring(0, 1).toUpperCase() + u.substring(1);
-              json2Dart(json.encode(jsonInputUser[u]), mdl);
-              data += """ $mdl? $u;\n""";
-              initial += "  $u ??= $mdl();\n";
-              fromVar +=
-                  "  $u!.setMulti(json['$u'] ?? $u!.multi!.map((e) => e.toJson()).toList());\n";
-              tj = ".toJson()";
-              parameters += """  this.$u,\n""";
-              toVar += "  data['$u'] = this.$u$tj;\n";
-              tj = "";
-            } else {
-              data += """ List? $u;\n""";
-              fromVar += "  $u = json['$u'] ?? $u;\n";
-              parameters += """  this.$u,\n""";
-              toVar += "  data['$u'] = this.$u$tj;\n";
-            }
-          } else if (jsonInputUser[u] is Map) {
-            List a = [];
-            a.add(jsonInputUser[u]);
-            String mdl = u.substring(0, 1).toUpperCase() + u.substring(1);
-            json2Dart(json.encode(a), mdl);
-            data += """ $mdl? $u;\n""";
-            initial += "  $u ??= $mdl();\n";
-            fromVar += "  $u!.fromJson(json['$u'] ?? $u!.toJson());\n";
-            tj = ".toJson()";
-            parameters += """  this.$u,\n""";
-            toVar += "  data['$u'] = this.$u$tj;\n";
-            tj = "";
-          } else {
-            print("\n>> See this type is not their .\n");
-          }
-        }
-      }
-
-      fromVar += "super.fromJson(json);\n";
-
-      String toJson =
-          "@override\n\nMap<String, dynamic> toJson() {\n final Map<String, dynamic> data = {};";
-      String fromJson =
-          "@override\n\nvoid fromJson(covariant Map<String, dynamic> json) {";
-      String headClass =
-          "import 'package:mc/mc.dart';\n\nclass $className extends McModel<$className>{\n";
-      String constractor = " $className({";
-      String init = initial.isNotEmpty ? "}" : ";";
-      String it = initial.isNotEmpty ? "{\n" : "";
-      String model = headClass +
-          data +
-          "\n" +
-          variable +
-          constractor +
-          "\n" +
-          parameters +
-          " })" +
-          it +
-          initial +
-          init +
-          "\n" +
-          fromJson +
-          "\n" +
-          fromVar +
-          " }\n" +
-          "\n\n" +
-          toJson +
-          "\n" +
-          toVar +
-          "\n" +
-          "  return data;" +
-          "\n }" +
-          multi +
-          "\n" +
-          "}";
-
-      TextEditingController result = TextEditingController();
-      model = DartFormatter().format(model);
-      result.text = model;
-      mdl.addModel(result, className);
-
-      return Future.value();
-    } catch (e) {
-      print("[-] $e");
-      return Future.value("[-Error] $e");
-    }
-  }
-
-  String fixFieldName(String name) {
-    String result = "";
-    if (name.contains("_")) {
-      List<String> splited = name.split("_");
-      splited.forEach((e) {
-        if (splited.first != e) {
-          result += e.substring(0, 1).toUpperCase() + e.substring(1);
-        } else {
-          result += e;
-        }
-      });
-      return result;
-    } else {
-      return name;
-    }
   }
 }
