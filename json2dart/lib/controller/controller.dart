@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class Mdls extends ChangeNotifier {
+class ModelsController extends ChangeNotifier {
   final List<TextEditingController> models = [];
   bool loading = false;
   List<String> titles = [];
@@ -22,4 +22,4 @@ class Mdls extends ChangeNotifier {
   }
 }
 
-final Mdls mdl = Mdls();
+final ModelsController mdl = ModelsController();
