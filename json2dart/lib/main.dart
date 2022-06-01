@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.brown,
       ),
-      home: MyHomePage(title: 'Json to Dart for mc Package'),
+      home: MyHomePage(title: 'Json to Dart for MVCRocket Package'),
     );
   }
 }
