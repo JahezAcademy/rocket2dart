@@ -21,5 +21,3 @@ class ModelsController extends ChangeNotifier {
     notifyListeners();
   }
 }
-
-final ModelsController mdl = ModelsController();

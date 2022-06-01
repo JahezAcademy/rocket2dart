@@ -12,7 +12,7 @@ class MyHomePage extends StatelessWidget {
   final TextEditingController data = TextEditingController();
   final TextEditingController name = TextEditingController();
   final TextEditingController result = TextEditingController();
-
+  final ModelsController mdl = ModelsController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
