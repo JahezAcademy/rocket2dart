@@ -1,6 +1,5 @@
 extension EString on String {
   String get upper => toUpperCase();
-  String subj(int from, [int to]) => substring(from, to);
   String get firstUpper =>
       this.substring(0, 1).toUpperCase() + this.substring(1);
   String get camel {
