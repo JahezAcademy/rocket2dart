@@ -35,17 +35,24 @@ class Generator {
       String fromJson;
       String toJson;
       if (modelTypes.contains(fieldType)) {
-        line = "${value.runtimeType}? ${key.camel};";
+        line = "${fieldType}? ${key.camel};";
         fromJson = "${key.camel} = json['$key'] ?? ${key.camel};";
         toJson = "data['$key'] = ${key.camel};";
       } else if (value is List) {
-        line = "${key.firstUpper} $key = ${key.firstUpper}();";
-        fromJson = "${key.firstUpper}.setMulti(json['$key'],isSub:isSub);";
-        toJson =
-            "data['$key'] = ${key.camel}.multi.map((e)=> e.toJson()).toList();";
-        Generator reGenerate = Generator();
-        reGenerate.generate(json.encode(value), key.firstUpper,
-            multi: true, controller: controller);
+        String fieldTypeItem = value.first.runtimeType.toString();
+        if (modelTypes.contains(fieldTypeItem)) {
+          line = "${fieldType}? ${key.camel};";
+          fromJson = "${key.camel} = json['$key'] ?? ${key.camel};";
+          toJson = "data['$key'] = ${key.camel};";
+        } else {
+          line = "${key.firstUpper} $key = ${key.firstUpper}();";
+          fromJson = "${key.camel}.setMulti(json['$key'],isSub:isSub);";
+          toJson =
+              "data['$key'] = ${key.camel}.multi.map((e)=> e.toJson()).toList();";
+          Generator reGenerate = Generator();
+          reGenerate.generate(json.encode(value), key.firstUpper,
+              multi: true, controller: controller);
+        }
       } else {
         line = "${key.firstUpper} $key = ${key.firstUpper}();";
         fromJson = "${key.camel}.fromJson(json['$key']);";
