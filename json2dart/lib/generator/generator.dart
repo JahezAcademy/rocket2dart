@@ -21,11 +21,13 @@ class Generator {
     } else if (jsonInputUser is Map) {
       generateFields(jsonInputUser, className,
           multi: multi, controller: controller);
-    } else {}
+    } else {
+      log("Unsupported type");
+    }
   }
 
-  List<String> modelTypes = ["String", "int", "double", "bool"];
-
+  final List<String> fieldTypes = ["String", "int", "double", "bool"];
+  final String jsonMapType = "_JsonMap";
   void generateFields(Map<String, dynamic> fields, String className,
       {bool multi = false, ModelsController controller}) {
     ModelItems model = ModelItems();
@@ -34,13 +36,13 @@ class Generator {
       String line;
       String fromJson;
       String toJson;
-      if (modelTypes.contains(fieldType)) {
+      if (fieldTypes.contains(fieldType)) {
         line = "${fieldType}? ${key.camel};";
         fromJson = "${key.camel} = json['$key'] ?? ${key.camel};";
         toJson = "data['$key'] = ${key.camel};";
       } else if (value is List) {
         String fieldTypeItem = value.first.runtimeType.toString();
-        if (modelTypes.contains(fieldTypeItem)) {
+        if (fieldTypes.contains(fieldTypeItem)) {
           line = "${fieldType}? ${key.camel};";
           fromJson = "${key.camel} = json['$key'] ?? ${key.camel};";
           toJson = "data['$key'] = ${key.camel};";
@@ -53,13 +55,15 @@ class Generator {
           reGenerate.generate(json.encode(value), key.firstUpper,
               multi: true, controller: controller);
         }
-      } else {
+      } else if (value.runtimeType.toString() == jsonMapType) {
         line = "${key.firstUpper} $key = ${key.firstUpper}();";
         fromJson = "${key.camel}.fromJson(json['$key']);";
         toJson = "data['$key'] = ${key.camel}.toJson();";
         Generator reGenerate = Generator();
         reGenerate.generate(json.encode(value), key.firstUpper,
             controller: controller);
+      } else {
+        log("Unsupported type");
       }
       model.constFields += "this.${key.camel},";
       model.fieldsLines += line;
