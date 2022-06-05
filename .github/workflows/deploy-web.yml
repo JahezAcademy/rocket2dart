@@ -24,14 +24,12 @@ jobs:
     - name: Enable flutter web
       run: flutter config --enable-web
       working-directory: ./json2dart
+    - name: 'Format code'
+      run: flutter format .
+      working-directory: ./json2dart
     - name: 'Build Web App'
       run: flutter build web
       working-directory: ./json2dart
-    - name: deploy
-      uses: peaceiris/actions-gh-pages@v3
-      with:
-        github_token: ${{ secrets.TOKEN }}
-        publish_dir: ./build/web
     - name: Deploy to Firebase Hosting
       uses: w9jds/firebase-action@master
       with:
