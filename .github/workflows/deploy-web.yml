@@ -1,4 +1,4 @@
-name: Build, Release app to Github Pages and Firebase Hosting
+name: Build, Release app to Firebase Hosting
 # name: Test, Build and Release apk
 # Controls when the action will run. Triggers the workflow on push or pull request
 # events but only for the master branch
@@ -36,3 +36,4 @@ jobs:
         args: deploy --only hosting
       env:
         FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+      working-directory: ./json2dart
