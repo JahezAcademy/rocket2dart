@@ -25,7 +25,7 @@ jobs:
       run: flutter config --enable-web
       working-directory: ./json2dart
     - name: 'Format code'
-      run: flutter format .
+      run: flutter format --set-exit-if-changed .
       working-directory: ./json2dart
     - name: 'Build Web App'
       run: flutter build web
@@ -36,4 +36,3 @@ jobs:
         args: deploy --only hosting
       env:
         FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
-      working-directory: ./json2dart
