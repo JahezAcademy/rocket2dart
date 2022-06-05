@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:json2dart/controller/controller.dart';
 
-import 'package:json2dart/logic/generator.dart';
+import 'package:json2dart/generator/generator.dart';
 import 'package:json2dart/ui/widgets/link.dart';
 import 'package:json2dart/ui/widgets/txtfield.dart';
 
@@ -12,7 +12,7 @@ class MyHomePage extends StatelessWidget {
   final TextEditingController data = TextEditingController();
   final TextEditingController name = TextEditingController();
   final TextEditingController result = TextEditingController();
-
+  final ModelsController mdl = ModelsController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -60,14 +60,13 @@ class MyHomePage extends StatelessWidget {
                   style: ButtonStyle(
                       backgroundColor: MaterialStateProperty.all(Colors.brown)),
                   child: Text(
-                    "Convert",
+                    "Generate MVCRocket model",
                     style: TextStyle(
                         fontWeight: FontWeight.bold, color: Colors.white),
                   ),
                   onPressed: () {
-                    mdl.setloadingt(true);
-                    json2Dart(data.text, name.text)
-                        .whenComplete(() => mdl.setloadingt(false));
+                    Generator generator = Generator();
+                    generator.generate(data.text, name.text, controller: mdl);
                   },
                 ),
               ),
@@ -80,12 +79,13 @@ class MyHomePage extends StatelessWidget {
                           ),
                         )
                       : Wrap(
-                          children: mdl.models
+                          children: mdl.models.reversed
                               .map(
                                 (e) => Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: MyTextField(e,
-                                      hint: 'Here your Model for mc package',
+                                      hint:
+                                          'Here your Model for MVCRocket package',
                                       label:
                                           'Result ${mdl.titles[mdl.models.indexOf(e)]} Model',
                                       icon: Icons.restore_outlined,
@@ -113,8 +113,8 @@ class MyHomePage extends StatelessWidget {
                 crossAxisAlignment: WrapCrossAlignment.center,
                 alignment: WrapAlignment.spaceEvenly,
                 children: [
-                  Links("https://pub.dev/packages/mc", Icons.library_add,
-                      "mc Package"),
+                  Links("https://pub.dev/packages/mvc_rocket",
+                      Icons.library_add, "MVCRocket Package"),
                   Links("https://github.com/M97Chahboun", Icons.code, "Github"),
                   Links("https://github.com/ourflutter/Json2Dart",
                       Icons.settings, "Tool"),
