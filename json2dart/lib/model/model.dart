@@ -7,8 +7,9 @@ class ModelItems {
   String toJsonFields = "";
   String instance = "";
   String className = "";
-  String get result{
-     return template.replaceFirst("-fields-", fieldsLines)
+  String get result {
+    return template
+        .replaceFirst("-fields-", fieldsLines)
         .replaceFirst("-fieldsConstructor-", constFields)
         .replaceFirst("-fromJsonFields-", fromJsonFields)
         .replaceFirst("-toJsonFields-", toJsonFields)

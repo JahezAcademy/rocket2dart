@@ -84,7 +84,8 @@ class MyHomePage extends StatelessWidget {
                                 (e) => Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: MyTextField(e,
-                                      hint: 'Here your Model for MVCRocket package',
+                                      hint:
+                                          'Here your Model for MVCRocket package',
                                       label:
                                           'Result ${mdl.titles[mdl.models.indexOf(e)]} Model',
                                       icon: Icons.restore_outlined,
