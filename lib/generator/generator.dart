@@ -26,7 +26,6 @@ class Generator {
     }
   }
 
-  final List<String> fieldTypes = ["String", "int", "double", "bool"];
   final String jsonMapType = "_JsonMap";
   void generateFields(Map<String, dynamic> fields, String className,
       {bool multi = false, ModelsController controller}) {
@@ -36,14 +35,19 @@ class Generator {
       String line;
       String fromJson;
       String toJson;
-      if (fieldTypes.contains(fieldType)) {
-        line = "${fieldType}? ${key.camel};";
+      bool isPrimitive =
+          value is String || value is int || value is double || value is bool;
+      if (isPrimitive) {
+        line = "$fieldType? ${key.camel};";
         fromJson = "${key.camel} = json['$key'] ?? ${key.camel};";
         toJson = "data['$key'] = ${key.camel};";
       } else if (value is List) {
-        String fieldTypeItem = value.first.runtimeType.toString();
-        if (fieldTypes.contains(fieldTypeItem)) {
-          line = "${fieldType}? ${key.camel};";
+        bool isPrimitive = value.first is String ||
+            value is int ||
+            value is double ||
+            value is bool;
+        if (isPrimitive) {
+          line = "$fieldType? ${key.camel};";
           fromJson = "${key.camel} = json['$key'] ?? ${key.camel};";
           toJson = "data['$key'] = ${key.camel};";
         } else {
@@ -51,7 +55,7 @@ class Generator {
           fromJson = "${key.camel}.setMulti(json['$key'],isSub:isSub);";
           toJson =
               "data['$key'] = ${key.camel}.multi.map((e)=> e.toJson()).toList();";
-          Generator reGenerate = Generator();
+          Generator reGenerate = new Generator();
           reGenerate.generate(json.encode(value), key.firstUpper,
               multi: true, controller: controller);
         }
@@ -59,7 +63,7 @@ class Generator {
         line = "${key.firstUpper} $key = ${key.firstUpper}();";
         fromJson = "${key.camel}.fromJson(json['$key']);";
         toJson = "data['$key'] = ${key.camel}.toJson();";
-        Generator reGenerate = Generator();
+        Generator reGenerate = new Generator();
         reGenerate.generate(json.encode(value), key.firstUpper,
             controller: controller);
       } else {
