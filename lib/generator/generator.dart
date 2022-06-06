@@ -51,7 +51,7 @@ class Generator {
           fromJson = "${key.camel}.setMulti(json['$key'],isSub:isSub);";
           toJson =
               "data['$key'] = ${key.camel}.multi.map((e)=> e.toJson()).toList();";
-          Generator reGenerate = Generator();
+          Generator reGenerate = new Generator();
           reGenerate.generate(json.encode(value), key.firstUpper,
               multi: true, controller: controller);
         }
@@ -59,7 +59,7 @@ class Generator {
         line = "${key.firstUpper} $key = ${key.firstUpper}();";
         fromJson = "${key.camel}.fromJson(json['$key']);";
         toJson = "data['$key'] = ${key.camel}.toJson();";
-        Generator reGenerate = Generator();
+        Generator reGenerate = new Generator();
         reGenerate.generate(json.encode(value), key.firstUpper,
             controller: controller);
       } else {
