@@ -80,6 +80,7 @@ class Generator {
     model.className = className;
     String result = DartFormatter().format(model.result);
     TextEditingController text = TextEditingController();
+    // just for re-pull request
     text.text = result;
     controller.addModel(text, className);
   }
