@@ -35,10 +35,9 @@ class Generator {
       String line;
       String fromJson;
       String toJson;
-      bool isPrimitive =
-          value is String || value is int || value is double || value is bool;
+      bool isPrimitive = value is String || value is int || value is double || value is bool;
       if (isPrimitive) {
-        line = "$fieldType? ${key.camel};";
+        line = "${fieldType}? ${key.camel};";
         fromJson = "${key.camel} = json['$key'] ?? ${key.camel};";
         toJson = "data['$key'] = ${key.camel};";
       } else if (value is List) {
