@@ -26,7 +26,7 @@ jobs:
     - name: 'Format code'
       run: flutter format --set-exit-if-changed .
     - name: 'Build Web App'
-      run: flutter build web --dart-define=FLUTTER_WEB_USE_SKIA=true
+      run: flutter build web
     - name: Deploy to Firebase Hosting
       uses: w9jds/firebase-action@master
       with:
