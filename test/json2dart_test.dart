@@ -1,0 +1,64 @@
+// This is a basic Flutter widget test.
+//
+// To perform an interaction with a widget in your test, use the WidgetTester
+// utility that Flutter provides. For example, you can send tap and scroll
+// gestures. You can also use WidgetTester to find child widgets in the widget
+// tree, read text, and verify that the values of widget properties are correct.
+
+import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:json2dart/main.dart';
+import 'package:json2dart/ui/widgets/txtfield.dart';
+
+import 'data.dart';
+
+void main() {
+  testWidgets('Test Json to Rocket Model Generator',
+      (WidgetTester tester) async {
+    // Build our app and trigger a frame.
+    await tester.pumpWidget(MyApp());
+    Key inputKey = Key("input");
+    Key generateButton = Key("generate");
+    Key outputKey = Key("output");
+    Key modelNameKey = Key("model_name");
+    // Add Json data
+    await tester.enterText(find.byKey(inputKey), inputJson);
+    // Add model name
+    await tester.enterText(find.byKey(modelNameKey), modelName);
+    // Click to generate button
+    await tester.tap(find.byKey(generateButton));
+    // wait 1 sec
+    await tester.pump(const Duration(seconds: 1));
+    // Get Rocket Model
+    final MyTextField outputField =
+        tester.widget<MyTextField>(find.byKey(outputKey));
+    // Get Result
+    expect(outputField.controller.text, outputModel);
+    expect(outputField.controller.text.contains("Post"), isTrue);
+  });
+
+  testWidgets('Test List to Rocket Model Generator',
+      (WidgetTester tester) async {
+    // Build our app and trigger a frame.
+    await tester.pumpWidget(MyApp());
+    Key inputKey = Key("input");
+    Key generateButton = Key("generate");
+    Key outputKey = Key("output");
+    Key modelNameKey = Key("model_name");
+    // Add List data
+    await tester.enterText(find.byKey(inputKey), "[$inputJson]");
+    // Add model name
+    await tester.enterText(find.byKey(modelNameKey), modelName);
+    // Click to generate button
+    await tester.tap(find.byKey(generateButton));
+    // wait 1 sec
+    await tester.pump(const Duration(seconds: 1));
+    // Get Rocket Model
+    final MyTextField outputField =
+        tester.widget<MyTextField>(find.byKey(outputKey));
+    // Get Result
+    expect(outputField.controller.text, outputMultiModel);
+    expect(outputField.controller.text.contains(resultModelName), isTrue);
+    expect(outputField.controller.text.contains(instance), isTrue);
+  });
+}
