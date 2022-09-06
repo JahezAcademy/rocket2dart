@@ -34,9 +34,9 @@ void main() {
     // Get Rocket Model
     final MyTextField outputField =
         tester.widget<MyTextField>(find.byKey(outputKey));
-    // Check model name 
+    // Check model name
     expect(outputField.controller.text, outputModel);
-    // Check model name 
+    // Check model name
     expect(outputField.controller.text.contains("Post"), isTrue);
     // Check fields is created from keys
     for (var field in inputJson.keys) {
@@ -75,6 +75,5 @@ void main() {
     }
   });
 }
-
 
 //TODO : Add tests for sub-model.

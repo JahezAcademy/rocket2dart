@@ -1,10 +1,11 @@
 const String modelName = "post";
 const Map inputJson = {
-    "userId": 1,
-    "id": 1,
-    "title": "sunt aut facere repellat provident occaecati excepturi optio reprehenderit",
-    "body": "quia et suscipit suscipit recusandae consequuntur expedita et cum"
-  };
+  "userId": 1,
+  "id": 1,
+  "title":
+      "sunt aut facere repellat provident occaecati excepturi optio reprehenderit",
+  "body": "quia et suscipit suscipit recusandae consequuntur expedita et cum"
+};
 
 const String outputModel = """import 'package:mvc_rocket/mvc_rocket.dart';
 
