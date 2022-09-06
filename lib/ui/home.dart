@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:json2dart/controller/controller.dart';
-
 import 'package:json2dart/generator/generator.dart';
 import 'package:json2dart/ui/widgets/link.dart';
 import 'package:json2dart/ui/widgets/txtfield.dart';
@@ -45,6 +44,7 @@ class MyHomePage extends StatelessWidget {
                 label: 'Json Data',
                 icon: Icons.data_usage,
                 max: 15,
+                key: Key("input"),
               ),
               MyTextField(
                 name,
@@ -52,11 +52,13 @@ class MyHomePage extends StatelessWidget {
                 help: 'Default name MyModel',
                 label: 'Model name',
                 icon: Icons.title,
+                key: Key("model_name"),
               ),
               Container(
                 width: MediaQuery.of(context).size.width,
                 height: MediaQuery.of(context).size.height * 0.08,
                 child: TextButton(
+                  key: Key("generate"),
                   style: ButtonStyle(
                       backgroundColor: MaterialStateProperty.all(Colors.brown)),
                   child: Text(
@@ -84,6 +86,7 @@ class MyHomePage extends StatelessWidget {
                                 (e) => Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: MyTextField(e,
+                                      key: Key("output"),
                                       hint:
                                           'Here your Model for MVCRocket package',
                                       label:
