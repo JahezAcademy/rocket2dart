@@ -5,6 +5,8 @@
 // gestures. You can also use WidgetTester to find child widgets in the widget
 // tree, read text, and verify that the values of widget properties are correct.
 
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:json2dart/main.dart';
@@ -22,7 +24,7 @@ void main() {
     Key outputKey = Key("output");
     Key modelNameKey = Key("model_name");
     // Add Json data
-    await tester.enterText(find.byKey(inputKey), inputJson);
+    await tester.enterText(find.byKey(inputKey), json.encode(inputJson));
     // Add model name
     await tester.enterText(find.byKey(modelNameKey), modelName);
     // Click to generate button
@@ -32,9 +34,14 @@ void main() {
     // Get Rocket Model
     final MyTextField outputField =
         tester.widget<MyTextField>(find.byKey(outputKey));
-    // Get Result
+    // Check model name 
     expect(outputField.controller.text, outputModel);
+    // Check model name 
     expect(outputField.controller.text.contains("Post"), isTrue);
+    // Check fields is created from keys
+    for (var field in inputJson.keys) {
+      expect(outputField.controller.text.contains(field), isTrue);
+    }
   });
 
   testWidgets('Test List to Rocket Model Generator',
@@ -46,7 +53,7 @@ void main() {
     Key outputKey = Key("output");
     Key modelNameKey = Key("model_name");
     // Add List data
-    await tester.enterText(find.byKey(inputKey), "[$inputJson]");
+    await tester.enterText(find.byKey(inputKey), "[${json.encode(inputJson)}]");
     // Add model name
     await tester.enterText(find.byKey(modelNameKey), modelName);
     // Click to generate button
@@ -56,9 +63,18 @@ void main() {
     // Get Rocket Model
     final MyTextField outputField =
         tester.widget<MyTextField>(find.byKey(outputKey));
-    // Get Result
+    // Check Result
     expect(outputField.controller.text, outputMultiModel);
+    // Check model name
     expect(outputField.controller.text.contains(resultModelName), isTrue);
+    // Check if instance code added
     expect(outputField.controller.text.contains(instance), isTrue);
+    // Check fields is created from keys
+    for (var field in inputJson.keys) {
+      expect(outputField.controller.text.contains(field), isTrue);
+    }
   });
 }
+
+
+//TODO : Add tests for sub-model.
