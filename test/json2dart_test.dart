@@ -14,15 +14,16 @@ import 'package:json2dart/ui/widgets/txtfield.dart';
 
 import 'data.dart';
 
+const Key inputKey = Key("input");
+const Key generateButton = Key("generate");
+const Key outputKey = Key("output");
+const Key modelNameKey = Key("model_name");
+
 void main() {
   testWidgets('Test Json to Rocket Model Generator',
       (WidgetTester tester) async {
     // Build our app and trigger a frame.
     await tester.pumpWidget(MyApp());
-    Key inputKey = Key("input");
-    Key generateButton = Key("generate");
-    Key outputKey = Key("output");
-    Key modelNameKey = Key("model_name");
     // Add Json data
     await tester.enterText(find.byKey(inputKey), json.encode(inputJson));
     // Add model name
@@ -48,10 +49,6 @@ void main() {
       (WidgetTester tester) async {
     // Build our app and trigger a frame.
     await tester.pumpWidget(MyApp());
-    Key inputKey = Key("input");
-    Key generateButton = Key("generate");
-    Key outputKey = Key("output");
-    Key modelNameKey = Key("model_name");
     // Add List data
     await tester.enterText(find.byKey(inputKey), "[${json.encode(inputJson)}]");
     // Add model name
