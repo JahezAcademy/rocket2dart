@@ -38,7 +38,7 @@ void main() {
     // Check model name
     expect(outputField.controller.text, outputModel);
     // Check model name
-    expect(outputField.controller.text.contains("Post"), isTrue);
+    expect(outputField.controller.text.contains(resultModelName), isTrue);
     // Check fields is created from keys
     for (var field in inputJson.keys) {
       expect(outputField.controller.text.contains(field), isTrue);
