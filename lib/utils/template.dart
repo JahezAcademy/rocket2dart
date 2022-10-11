@@ -19,7 +19,7 @@ class -name- extends RocketModel<-name-> {
    -updateFieldsParams-
   }) {
    -updateFieldsBody-
-    rebuildWidget();
+    rebuildWidget(fromUpdate: true);
   }
 
   @override
