@@ -53,11 +53,14 @@ class Generator {
         updateFieldsParams = updateFieldParamLine;
         updateFieldsBody = updateFieldBodyLine;
       } else if (value is List) {
-        bool isPrimitive = value.first is String ||
-            value.first is int ||
-            value.first is double ||
-            value.first is bool;
-        if (isPrimitive) {
+        bool isEmpty = value.isEmpty;
+        bool isPrimitive = false;
+        if (!isEmpty)
+          isPrimitive = value.first is String ||
+              value.first is int ||
+              value.first is double ||
+              value.first is bool;
+        if (isEmpty || isPrimitive) {
           line = "$fieldType? ${key.camel};";
           fromJson = "${key.camel} = json[$fieldKeyMap];";
           toJson = "data[$fieldKeyMap] = ${key.camel};";
