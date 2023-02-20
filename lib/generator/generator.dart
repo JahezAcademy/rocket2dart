@@ -1,10 +1,11 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:dart_style/dart_style.dart';
 import 'package:flutter/material.dart';
 import 'package:json2dart/controller/controller.dart';
 import 'package:json2dart/model/model.dart';
-import 'package:json2dart/utils/extensions.dart';
+import 'package:json2dart/utils/extensions.dart' show EString, PrimitiveData;
 import 'package:json2dart/utils/template.dart';
 
 class Generator {
@@ -23,7 +24,7 @@ class Generator {
       generateFields(jsonInputUser, className,
           multi: multi, controller: controller);
     } else {
-      print("Unsupported type");
+      log("Unsupported type");
     }
   }
 
@@ -43,8 +44,7 @@ class Generator {
       final String updateFieldParamLine = "$fieldType? ${key.camel}Field,";
       final String updateFieldBodyLine =
           "${key.camel} = ${key.camel}Field ?? ${key.camel};";
-      bool isPrimitive =
-          value is String || value is int || value is double || value is bool;
+      bool isPrimitive = (value as Object).isPrimitive;
       if (isPrimitive) {
         line = "$fieldType? ${key.camel};";
         fromJson = "${key.camel} = json[$fieldKeyMap];";
@@ -53,11 +53,10 @@ class Generator {
         updateFieldsParams = updateFieldParamLine;
         updateFieldsBody = updateFieldBodyLine;
       } else if (value is List) {
-        bool isPrimitive = value.first is String ||
-            value.first is int ||
-            value.first is double ||
-            value.first is bool;
-        if (isPrimitive) {
+        bool isEmpty = value.isEmpty;
+        bool isPrimitive = false;
+        if (!isEmpty) isPrimitive = (value.first as Object).isPrimitive;
+        if (isEmpty || isPrimitive) {
           line = "$fieldType? ${key.camel};";
           fromJson = "${key.camel} = json[$fieldKeyMap];";
           toJson = "data[$fieldKeyMap] = ${key.camel};";

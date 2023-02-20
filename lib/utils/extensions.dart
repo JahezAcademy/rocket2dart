@@ -15,3 +15,8 @@ extension EString on String {
     return this;
   }
 }
+
+extension PrimitiveData on Object {
+  bool get isPrimitive =>
+      this is String || this is int || this is double || this is bool;
+}
