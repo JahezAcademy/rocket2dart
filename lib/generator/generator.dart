@@ -114,6 +114,7 @@ class Generator {
     String result = DartFormatter().format(modelItems.result);
     DartCodeViewer dartCode = DartCodeViewer(
       result,
+      key: Key("output"),
       copyButtonText: Text("Copy ${modelItems.className} Model"),
       backgroundColor: Colors.white,
     );

@@ -21,6 +21,8 @@ jobs:
         channel: 'stable'
     - name: 'Run flutter pub get'
       run: flutter pub get
+    - name: pub Upgrade
+      run: flutter pub upgrade
     - name: 'Build Web App'
       run: flutter build web
     - name: Deploy to Firebase Hosting
