@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:json2dart/controller/controller.dart';
 import 'package:json2dart/generator/generator.dart';
 import 'package:json2dart/ui/widgets/link.dart';
@@ -84,28 +83,8 @@ class MyHomePage extends StatelessWidget {
                           children: mdl.models.reversed
                               .map(
                                 (e) => Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: MyTextField(e,
-                                      key: Key("output"),
-                                      hint:
-                                          'Here your Model for MVCRocket package',
-                                      label:
-                                          'Result ${mdl.titles[mdl.models.indexOf(e)]} Model',
-                                      icon: Icons.restore_outlined,
-                                      copy: IconButton(
-                                        icon: Icon(Icons.copy),
-                                        onPressed: () => Clipboard.setData(
-                                                new ClipboardData(text: e.text))
-                                            .whenComplete(() =>
-                                                ScaffoldMessenger.of(context)
-                                                    .showSnackBar(SnackBar(
-                                                  content:
-                                                      const Text('Data copied'),
-                                                  duration: const Duration(
-                                                      seconds: 1),
-                                                ))),
-                                      )),
-                                ),
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: e),
                               )
                               .toList(),
                         );
