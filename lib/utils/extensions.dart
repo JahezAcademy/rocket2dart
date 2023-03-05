@@ -16,6 +16,10 @@ extension EString on String {
   }
 }
 
+extension EInt on int {
+  bool get isDouble => this.toString().contains(".");
+}
+
 extension PrimitiveData on Object {
   bool get isPrimitive =>
       this is String || this is int || this is double || this is bool;
