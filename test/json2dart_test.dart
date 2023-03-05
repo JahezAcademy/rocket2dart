@@ -36,8 +36,7 @@ void main() {
     final DartCodeViewer outputField =
         tester.widget<DartCodeViewer>(find.byKey(outputKey));
     // Check model name
-    expect(outputField.data,
-        outputModel.replaceFirst("\n\n  (instance)", ""));
+    expect(outputField.data, outputModel.replaceFirst("\n\n  (instance)", ""));
     // Check model name
     expect(outputField.data.contains(resultModelName), isTrue);
     // Check fields is created from keys
