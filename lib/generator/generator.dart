@@ -31,7 +31,7 @@ class Generator {
       {bool multi = false, ModelsController controller}) {
     ModelItems modelItems = ModelItems();
     fields.forEach((key, value) {
-      String fieldType = value.runtimeType.toString();
+      String fieldType = _solveDouble(value);
       String line;
       String fromJson, toJson;
       String initFields = "";
@@ -57,7 +57,7 @@ class Generator {
         if (isNotEmpty) isPrimitive = (value.first as Object).isPrimitive;
         if (!isNotEmpty || isPrimitive) {
           final String fieldSubType =
-              isNotEmpty ? value.first.runtimeType.toString() : "dynamic";
+              isNotEmpty ? _solveDouble(value.first) : "dynamic";
           line = "List<$fieldSubType>? ${key.camel};";
           fromJson = "${key.camel} = json[$fieldKeyMap];";
           toJson = "data[$fieldKeyMap] = ${key.camel};";
@@ -109,5 +109,14 @@ class Generator {
     String result = DartFormatter().format(modelItems.result);
     TextEditingController text = TextEditingController(text: result);
     controller.addModel(text, className);
+  }
+
+  String _solveDouble(dynamic field) {
+    if (field is int) {
+      if (field.isDouble) {
+        return "double";
+      }
+    }
+    return field.runtimeType.toString();
   }
 }
