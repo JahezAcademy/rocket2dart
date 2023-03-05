@@ -7,10 +7,10 @@
 
 import 'dart:convert';
 
+import 'package:dart_code_viewer2/dart_code_viewer2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:json2dart/main.dart';
-import 'package:json2dart/ui/widgets/txtfield.dart';
 
 import 'data.dart';
 
@@ -33,16 +33,16 @@ void main() {
     // wait 1 sec
     await tester.pump(const Duration(seconds: 1));
     // Get Rocket Model
-    final MyTextField outputField =
-        tester.widget<MyTextField>(find.byKey(outputKey));
+    final DartCodeViewer outputField =
+        tester.widget<DartCodeViewer>(find.byKey(outputKey));
     // Check model name
-    expect(outputField.controller.text,
+    expect(outputField.data,
         outputModel.replaceFirst("\n\n  (instance)", ""));
     // Check model name
-    expect(outputField.controller.text.contains(resultModelName), isTrue);
+    expect(outputField.data.contains(resultModelName), isTrue);
     // Check fields is created from keys
     for (var field in inputJson.keys) {
-      expect(outputField.controller.text.contains(field), isTrue);
+      expect(outputField.data.contains(field), isTrue);
     }
   });
 
@@ -59,17 +59,17 @@ void main() {
     // wait 1 sec
     await tester.pump(const Duration(seconds: 1));
     // Get Rocket Model
-    final MyTextField outputField =
-        tester.widget<MyTextField>(find.byKey(outputKey));
+    final DartCodeViewer outputField =
+        tester.widget<DartCodeViewer>(find.byKey(outputKey));
     // Check Result
-    expect(outputField.controller.text, outputMultiModel);
+    expect(outputField.data, outputMultiModel);
     // Check model name
-    expect(outputField.controller.text.contains(resultModelName), isTrue);
+    expect(outputField.data.contains(resultModelName), isTrue);
     // Check if instance code added
-    expect(outputField.controller.text.contains(instance), isTrue);
+    expect(outputField.data.contains(instance), isTrue);
     // Check fields is created from keys
     for (var field in inputJson.keys) {
-      expect(outputField.controller.text.contains(field), isTrue);
+      expect(outputField.data.contains(field), isTrue);
     }
   });
 }
