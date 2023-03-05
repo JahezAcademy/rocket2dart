@@ -1,9 +1,9 @@
-name: Build & Deploy app to Firebase Hosting
+name: Test App
 # name: Test, Build and Release apk
 # Controls when the action will run. Triggers the workflow on push or pull request
 # events but only for the master branch
 on:
-  push:
+  pull_request:
     branches:
       - Json2Rocket
 
@@ -21,11 +21,9 @@ jobs:
         channel: 'stable'
     - name: 'Run flutter pub get'
       run: flutter pub get
-    - name: 'Build Web App'
-      run: flutter build web
-    - name: Deploy to Firebase Hosting
-      uses: w9jds/firebase-action@master
-      with:
-        args: deploy --only hosting
-      env:
-        FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+    - name: Enable flutter web
+      run: flutter config --enable-web
+    - name: 'Format code'
+      run: flutter format --set-exit-if-changed .
+    - name: 'Run Test'
+      run: flutter test

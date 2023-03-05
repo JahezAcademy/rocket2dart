@@ -1,10 +1,11 @@
 import 'dart:convert';
+
 import 'package:dart_style/dart_style.dart';
 import 'package:flutter/material.dart';
 import 'package:json2dart/controller/controller.dart';
 import 'package:json2dart/model/model.dart';
-import 'package:json2dart/utils/template.dart';
 import 'package:json2dart/utils/extensions.dart';
+import 'package:json2dart/utils/template.dart';
 
 class Generator {
   String copyTemplate;
@@ -42,31 +43,30 @@ class Generator {
       final String updateFieldParamLine = "$fieldType? ${key.camel}Field,";
       final String updateFieldBodyLine =
           "${key.camel} = ${key.camel}Field ?? ${key.camel};";
-      bool isPrimitive =
-          value is String || value is int || value is double || value is bool;
+      bool isPrimitive = (value as Object).isPrimitive;
       if (isPrimitive) {
         line = "$fieldType? ${key.camel};";
-        fromJson = "${key.camel} = json[$fieldKeyMap] ?? ${key.camel};";
+        fromJson = "${key.camel} = json[$fieldKeyMap];";
         toJson = "data[$fieldKeyMap] = ${key.camel};";
         fieldsKey = fieldLine;
         updateFieldsParams = updateFieldParamLine;
         updateFieldsBody = updateFieldBodyLine;
       } else if (value is List) {
-        bool isPrimitive = value.first is String ||
-            value.first is int ||
-            value.first is double ||
-            value.first is bool;
-        if (isPrimitive) {
-          line = "$fieldType? ${key.camel};";
-          fromJson = "${key.camel} = json[$fieldKeyMap] ?? ${key.camel};";
+        bool isNotEmpty = value.isNotEmpty;
+        bool isPrimitive = false;
+        if (isNotEmpty) isPrimitive = (value.first as Object).isPrimitive;
+        if (!isNotEmpty || isPrimitive) {
+          final String fieldSubType =
+              isNotEmpty ? value.first.runtimeType.toString() : "dynamic";
+          line = "List<$fieldSubType>? ${key.camel};";
+          fromJson = "${key.camel} = json[$fieldKeyMap];";
           toJson = "data[$fieldKeyMap] = ${key.camel};";
           fieldsKey = fieldLine;
-          updateFieldsParams = updateFieldParamLine;
+          updateFieldsParams = "List<$fieldSubType>? ${key.camel}Field,";
           updateFieldsBody = updateFieldBodyLine;
         } else {
           line = "${key.firstUpper}? $key;";
-          fromJson =
-              "${key.camel}!.setMulti(json['$key']??${key.camel}!.multi.map((e)=> e.toJson()).toList(),isSub:isSub);";
+          fromJson = "${key.camel}!.setMulti(json['$key']);";
           toJson =
               "data[$fieldKeyMap] = ${key.camel}!.multi.map((e)=> e.toJson()).toList();";
           fieldsKey = fieldLine;
@@ -80,8 +80,7 @@ class Generator {
         }
       } else if (value is Map) {
         line = "${key.firstUpper}? $key;";
-        fromJson =
-            "${key.camel}!.fromJson(json[$fieldKeyMap]??${key.camel}!.toJson(),isSub: isSub);";
+        fromJson = "${key.camel}!.fromJson(json[$fieldKeyMap]);";
         toJson = "data[$fieldKeyMap] = ${key.camel}!.toJson();";
         fieldsKey = fieldLine;
         updateFieldsParams = "${key.firstUpper}? ${key.camel}Field,";
