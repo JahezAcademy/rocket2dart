@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:dart_code_viewer2/dart_code_viewer2.dart';
 import 'package:dart_style/dart_style.dart';
 import 'package:flutter/material.dart';
 import 'package:json2dart/controller/controller.dart';
@@ -27,6 +28,10 @@ class Generator {
     }
   }
 
+  bool _isPrimitive(item) {
+    return item is String || item is int || item is double || item is bool;
+  }
+
   void generateFields(Map<String, dynamic> fields, String className,
       {bool multi = false, ModelsController controller}) {
     ModelItems modelItems = ModelItems();
@@ -43,7 +48,7 @@ class Generator {
       final String updateFieldParamLine = "$fieldType? ${key.camel}Field,";
       final String updateFieldBodyLine =
           "${key.camel} = ${key.camel}Field ?? ${key.camel};";
-      bool isPrimitive = (value as Object).isPrimitive;
+      bool isPrimitive = _isPrimitive(value);
       if (isPrimitive) {
         line = "$fieldType? ${key.camel};";
         fromJson = "${key.camel} = json[$fieldKeyMap];";
@@ -54,7 +59,7 @@ class Generator {
       } else if (value is List) {
         bool isNotEmpty = value.isNotEmpty;
         bool isPrimitive = false;
-        if (isNotEmpty) isPrimitive = (value.first as Object).isPrimitive;
+        if (isNotEmpty) isPrimitive = _isPrimitive(value.first);
         if (!isNotEmpty || isPrimitive) {
           final String fieldSubType =
               isNotEmpty ? _solveDouble(value.first) : "dynamic";
@@ -107,8 +112,12 @@ class Generator {
     });
     modelItems.className = className;
     String result = DartFormatter().format(modelItems.result);
-    TextEditingController text = TextEditingController(text: result);
-    controller.addModel(text, className);
+    DartCodeViewer dartCode = DartCodeViewer(
+      result,
+      copyButtonText: Text("Copy ${modelItems.className} Model"),
+      backgroundColor: Colors.white,
+    );
+    controller.addModel(dartCode, className);
   }
 
   String _solveDouble(dynamic field) {
