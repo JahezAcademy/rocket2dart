@@ -51,12 +51,13 @@ class Generator {
         fieldsKey = fieldLine;
         updateFieldsParams = updateFieldParamLine;
         updateFieldsBody = updateFieldBodyLine;
-      } else if (value is List) { 
+      } else if (value is List) {
         bool isNotEmpty = value.isNotEmpty;
         bool isPrimitive = false;
         if (isNotEmpty) isPrimitive = (value.first as Object).isPrimitive;
         if (!isNotEmpty || isPrimitive) {
-          final String fieldSubType = isNotEmpty? value.first.runtimeType.toString():"dynamic";
+          final String fieldSubType =
+              isNotEmpty ? value.first.runtimeType.toString() : "dynamic";
           line = "List<$fieldSubType>? ${key.camel};";
           fromJson = "${key.camel} = json[$fieldKeyMap];";
           toJson = "data[$fieldKeyMap] = ${key.camel};";
