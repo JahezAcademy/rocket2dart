@@ -1,24 +1,24 @@
-import 'package:dart_code_viewer2/dart_code_viewer2.dart';
 import 'package:flutter/material.dart';
+import 'package:rocket_cli/rocket_cli.dart';
 
-class ModelsController extends ChangeNotifier {
-  final List<DartCodeViewer> models = [];
+class GeneratorController extends ChangeNotifier {
   bool loading = false;
-  List<String> titles = [];
-  void setloadingt(bool status) {
+  final controller = ModelsController();
+  void setLoading(bool status) {
     loading = status;
     notifyListeners();
   }
 
   void clearAll() {
-    models.clear();
-    titles.clear();
+    controller.clearAll();
     notifyListeners();
   }
 
-  void addModel(DartCodeViewer result, String title) {
-    models.add(result);
-    titles.add(title);
-    notifyListeners();
+  void generate(String inputUser, String className, {bool multi = false}) {
+    setLoading(true);
+    Generator generator = Generator();
+    generator
+        .generate(inputUser, className, controller)
+        .whenComplete(() => setLoading(false));
   }
 }
