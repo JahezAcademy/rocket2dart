@@ -7,7 +7,7 @@ const Map inputJson = {
   "body": "quia et suscipit suscipit recusandae consequuntur expedita et cum"
 };
 
-const String outputModel = """import 'package:mvc_rocket/mvc_rocket.dart';
+const String outputModel = """import 'package:flutter_rocket/flutter_rocket.dart';
 
 const String postUserIdField = "userId";
 const String postIdField = "id";

@@ -100,8 +100,8 @@ class MyHomePage extends StatelessWidget {
                 crossAxisAlignment: WrapCrossAlignment.center,
                 alignment: WrapAlignment.spaceEvenly,
                 children: [
-                  Links("https://pub.dev/packages/mvc_rocket",
-                      Icons.library_add, "MVCRocket Package"),
+                  Links("https://pub.dev/packages/flutter_rocket",
+                      Icons.library_add, "Flutter Rocket Package"),
                   Links("https://github.com/M97Chahboun", Icons.code, "Github"),
                   Links("https://github.com/ourflutter/Json2Dart",
                       Icons.settings, "Tool"),
