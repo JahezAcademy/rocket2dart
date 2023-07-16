@@ -10,11 +10,12 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Json2Rocket [MVCRocket Package]',
+      title: 'Json2Rocket [Flutter Rocket Package]',
       theme: ThemeData(
-        primarySwatch: Colors.brown,
+        useMaterial3: true,
+        colorSchemeSeed: Colors.brown,
       ),
-      home: MyHomePage(title: 'Json to MVCRocket Package'),
+      home: MyHomePage(title: 'Json to Flutter Rocket Model'),
     );
   }
 }

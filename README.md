@@ -2,7 +2,7 @@
 [![Test App](https://github.com/JahezAcademy/rocket2dart/actions/workflows/ci-workflow.yaml/badge.svg)](https://github.com/JahezAcademy/rocket2dart/actions/workflows/ci-workflow.yaml)
 # [Rocket2Dart](json2dart.web.app)
 
-Website for convert json data to dart Model appropriate with [MVCRocket package](https://pub.dev/packages/mvc_rocket)
+Website for convert json data to dart Model appropriate with [Flutter Rocket package](https://pub.dev/packages/flutter_rocket)
 
 
 

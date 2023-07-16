@@ -4,14 +4,14 @@ class MyTextField extends StatelessWidget {
   final String hint, help, label;
   final IconData icon;
   final TextEditingController controller;
-  final int max;
-  final IconButton copy;
+  final int? max;
+  final IconButton? copy;
   MyTextField(this.controller,
-      {Key key,
-      this.hint,
-      this.help,
-      this.label,
-      this.icon,
+      {Key? key,
+      required this.hint,
+      required this.help,
+      required this.label,
+      required this.icon,
       this.max,
       this.copy})
       : super(key: key);
