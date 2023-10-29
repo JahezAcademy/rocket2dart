@@ -1,5 +1,6 @@
 {
   "hosting": {
+    "target": "old-json2dart",
     "public": "build/web",
     "ignore": [
       "firebase.json",

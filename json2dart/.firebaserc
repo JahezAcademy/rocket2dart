@@ -1,5 +1,15 @@
 {
   "projects": {
     "default": "json2dart"
-  }
+  },
+  "targets": {
+    "json2dart": {
+      "hosting": {
+        "old-json2dart": [
+          "old-json2dart"
+        ]
+      }
+    }
+  },
+  "etags": {}
 }
